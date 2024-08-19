@@ -1,0 +1,125 @@
+{
+    "reviews": [
+      {
+        "professor": "Dr. Jane Smith",
+        "subject": "Introduction to Psychology",
+        "stars": 4,
+        "review": "Dr. Smith is very knowledgeable, and her lectures are engaging. However, her grading can be tough."
+      },
+      {
+        "professor": "Dr. Robert Johnson",
+        "subject": "Calculus I",
+        "stars": 3,
+        "review": "The material is challenging, and Dr. Johnson's explanations can be a bit unclear at times."
+      },
+      {
+        "professor": "Dr. Emily Davis",
+        "subject": "World History",
+        "stars": 5,
+        "review": "Dr. Davis is passionate about history and makes every class interesting. Highly recommended!"
+      },
+      {
+        "professor": "Dr. Michael Brown",
+        "subject": "Organic Chemistry",
+        "stars": 2,
+        "review": "Dr. Brown's lectures are difficult to follow, and the exams are extremely hard."
+      },
+      {
+        "professor": "Dr. Sarah Wilson",
+        "subject": "English Literature",
+        "stars": 4,
+        "review": "Dr. Wilson is a great professor, but she assigns a lot of reading and essays."
+      },
+      {
+        "professor": "Dr. John Lee",
+        "subject": "Computer Science 101",
+        "stars": 5,
+        "review": "Dr. Lee is excellent at explaining complex concepts in an easy-to-understand way."
+      },
+      {
+        "professor": "Dr. Karen Taylor",
+        "subject": "Microeconomics",
+        "stars": 3,
+        "review": "Dr. Taylor's lectures are informative, but she can be a bit monotone."
+      },
+      {
+        "professor": "Dr. James Martinez",
+        "subject": "Physics II",
+        "stars": 4,
+        "review": "Dr. Martinez is a solid professor, but the course material is very challenging."
+      },
+      {
+        "professor": "Dr. Patricia Anderson",
+        "subject": "Sociology",
+        "stars": 5,
+        "review": "Dr. Anderson's classes are thought-provoking and she genuinely cares about her students."
+      },
+      {
+        "professor": "Dr. William Thomas",
+        "subject": "Statistics",
+        "stars": 3,
+        "review": "Dr. Thomas knows his stuff, but his teaching style can be dry and uninspiring."
+      },
+      {
+        "professor": "Dr. Linda Jackson",
+        "subject": "Art History",
+        "stars": 4,
+        "review": "Dr. Jackson brings art to life with her lectures, but the workload is heavy."
+      },
+      {
+        "professor": "Dr. Mark White",
+        "subject": "Biology 101",
+        "stars": 5,
+        "review": "Dr. White is an amazing professor. His enthusiasm makes the subject enjoyable."
+      },
+      {
+        "professor": "Dr. Nancy Harris",
+        "subject": "Philosophy",
+        "stars": 2,
+        "review": "Dr. Harris's classes are difficult, and she tends to go off on tangents."
+      },
+      {
+        "professor": "Dr. Charles Clark",
+        "subject": "Macroeconomics",
+        "stars": 4,
+        "review": "Dr. Clark is very knowledgeable, but his exams are tough."
+      },
+      {
+        "professor": "Dr. Susan Lewis",
+        "subject": "Political Science",
+        "stars": 5,
+        "review": "Dr. Lewis's classes are engaging and she encourages critical thinking."
+      },
+      {
+        "professor": "Dr. Steven Walker",
+        "subject": "Chemistry 101",
+        "stars": 3,
+        "review": "Dr. Walker is a decent professor, but the course material is hard to grasp."
+      },
+      {
+        "professor": "Dr. Barbara Hall",
+        "subject": "Psychology of Learning",
+        "stars": 5,
+        "review": "Dr. Hall is an excellent professor who makes learning fun and interactive."
+      },
+      {
+        "professor": "Dr. Matthew Allen",
+        "subject": "Ethics",
+        "stars": 4,
+        "review": "Dr. Allen is a great lecturer, but the topics can be quite abstract."
+      },
+      {
+        "professor": "Dr. Jennifer Young",
+        "subject": "Creative Writing",
+        "stars": 5,
+        "review": "Dr. Young inspires creativity and provides constructive feedback on all assignments."
+      },
+      {
+        "professor": "Dr. Paul King",
+        "subject": "Linear Algebra",
+        "stars": 3,
+        "review": "Dr. King is knowledgeable, but his lectures can be hard to follow."
+      }
+    ]
+  }
+  
