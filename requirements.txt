@@ -1,0 +1,4 @@
+python-dotenv==1.0.1
+ipykernel==6.29.5
+openai==1.41.1
+pinecone-client[grpc]==5.0.1
