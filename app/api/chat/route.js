@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { Pinecone } from "@pinecone-database/pinecone";
-import openai from "openai";
+import OpenAI from "openai";
 
 const systemPrompt = `System Prompt for "Rate My Professor" Agent:
 
@@ -53,9 +53,10 @@ export async function POST(req) {
     apiKey: process.env.PINECONE_API_KEY,
   });
   const index = pc.Index("rag").namespace("ns1");
+  const openai = new OpenAI();
   const text = data[data.length - 1].content; //get the last message from the user
-  const embedding = await OpenAI.Embeddings.create({
-    model: "text-embbedding-3-small",
+  const embedding = await openai.embeddings.create({
+    model: "text-embedding-3-small",
     input: text,
     encoding_format: "float",
   });
