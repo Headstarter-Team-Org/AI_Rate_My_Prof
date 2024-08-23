@@ -1,10 +1,7 @@
 import { NextResponse } from "next/server";
 import { Pinecone } from "@pinecone-database/pinecone";
-import * as cheerio from 'cheerio';
 import { ChatOpenAI } from "@langchain/openai";
-import { createStuffDocumentsChain } from "langchain/chains/combine_documents";
-import { UnstructuredLoader } from "@langchain/community/document_loaders/fs/unstructured";
-import { MemoryVectorStore } from "langchain/vectorstores/memory";
+import { FireCrawlLoader } from "@langchain/community/document_loaders/web/firecrawl";
 
 const pinecone = new Pinecone({
   apiKey: process.env.PINECONE_API_KEY,
@@ -24,43 +21,37 @@ export async function POST(request) {
     const llm = new ChatOpenAI({
       apiKey: process.env.OPENAI_API_KEY,
       modelName: "gpt-4o-mini",
+      temperature: 0
     });
 
-    // MemoryVectorStore is used for storing document embeddings in-memory
-    const vectorStore = new MemoryVectorStore();
-
-    // Set up createStuffDocumentsChain
-    const chain = await createStuffDocumentsChain({
-      retriever: vectorStore.asRetriever(),
-      llm: llm,
-    });
-
-    for (const url of urls) {
+    for (const currURL of urls) {
       try {
-        const response = await fetch(url);
+        const loader = new FireCrawlLoader({
+          url: currURL, // The URL to scrape
+          apiKey: process.env.FIRECRAWL_API_KEY, // Optional, defaults to `FIRECRAWL_API_KEY` in your env.
+          mode: "scrape",
+        });
 
-        if (!response.ok) {
-          console.error(`Failed to fetch data from URL: ${url}`);
+        const docs = await loader.load();
+        if (docs[0].metadata.pageStatusCode != 200) {
+          console.error(`Failed to fetch data from URL: ${currURL}`);
           continue;
         }
-
-        const htmlContent = await response.text();
-        const $ = cheerio.load(htmlContent);
-
-        // Use LangChain's HTMLLoader to process the HTML content
-        const loader = new UnstructuredLoader(htmlContent);
-        const documents = await loader.load();
-
-        // Store documents in vector store
-        await vectorStore.addDocuments(documents);
-
+    
         // Query the chain to extract professor information
         const query = "Extract the professor's name, subject, rating, and review.";
-        const extraction = await chain.call({ question: query });
-
+        //const extraction = await chain.call({ question: query });
+        const aiMsg = await llm.invoke([
+          [
+            "system",
+            query,
+          ],
+          ["human", docs[0].pageContent],
+        ]);
+        console.log(aiMsg.content)
         // Assuming the extraction includes the professor's details in JSON format
         const data = JSON.parse(extraction.text);
-
+        
         if (data.professor && data.subject && !isNaN(data.stars)) {
           scrapedData.push({
             professor: data.professor,
@@ -69,10 +60,10 @@ export async function POST(request) {
             review: data.review || "",
           });
         } else {
-          console.error(`Failed to scrape data from URL: ${url}. The data might be incomplete or invalid.`);
+          console.error(`Failed to scrape data from URL: ${currURL}. The data might be incomplete or invalid.`);
         }
       } catch (error) {
-        console.error(`Error occurred while processing URL: ${url}`, error.message);
+        console.error(`Error occurred while processing URL: ${currURL}`, error.message);
       }
     }
 
@@ -89,7 +80,7 @@ export async function POST(request) {
         review: entry.review,
       },
     }));
-
+    
     await pinecone.upsert({
       indexName: "rag",
       upsertRequest: {
