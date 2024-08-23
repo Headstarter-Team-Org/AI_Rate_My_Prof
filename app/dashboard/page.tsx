@@ -1,4 +1,7 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { useState } from "react";
 
 export default function Dashboard() {
@@ -58,8 +61,44 @@ export default function Dashboard() {
   };
 
   return (
-    <main>
+    <main className="flex min-h-screen flex-col items-center gap-10 p-5">
       <h1>Dashboard</h1>
+      <Card className="w-[80vw] h-[60vh] flex flex-col">
+        <CardContent className="flex-grow overflow-auto p-4">
+          <div className="flex flex-col space-y-4">
+            {messages.map((message, index) => (
+              <div
+                key={index}
+                className={`flex ${
+                  message.role === "assistant" ? "justify-start" : "justify-end"
+                }`}
+              >
+                <div
+                  className={`${
+                    message.role === "assistant"
+                      ? "bg-secondary text-black"
+                      : "bg-primary text-white"
+                  } p-2 rounded-md max-w-[70%]`}
+                >
+                  <p className="sm:text-base text-sm">{message.content}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+        <CardContent className="p-4 ">
+          <div className="flex flex-row gap-2">
+            <Input
+              className="flex-grow"
+              type="text"
+              placeholder="Enter message"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+            />
+            <Button onClick={sendMessage}>Send</Button>
+          </div>
+        </CardContent>
+      </Card>
     </main>
   );
 }
