@@ -54,8 +54,8 @@ export async function POST(req) {
     })
     const index = pc.Index('rag').namespace('ns1')
     const text = data[data.length - 1].content
-    const embedding = await OpenAI.Embeddings.create({
-        model: "text-embbedding-3-small",
+    const embedding = await openai.embeddings.create({
+        model: "text-embedding-3-small",
         input: text,
         encoding_format: 'float',
     })
