@@ -3,13 +3,15 @@ import { Pinecone } from "@pinecone-database/pinecone";
 import { ChatOpenAI } from "@langchain/openai";
 import { FireCrawlLoader } from "@langchain/community/document_loaders/web/firecrawl";
 
-const pinecone = new Pinecone({
-  apiKey: process.env.PINECONE_API_KEY,
-});
-
 export async function POST(request) {
   try {
     const { urls } = await request.json();
+
+    const pc = new Pinecone({
+      apiKey: process.env.PINECONE_API_KEY,
+    });
+
+    const index = pc.Index('rag').namespace('ns1')
 
     if (!urls || !Array.isArray(urls)) {
       return NextResponse.json({ error: "Invalid input, expected an array of URLs." }, { status: 400 });
@@ -39,8 +41,18 @@ export async function POST(request) {
         }
     
         // Query the chain to extract professor information
-        const query = "Extract the professor's name, subject, rating, and review.";
-        //const extraction = await chain.call({ question: query });
+        const query = `Extract the professor's name, subject, rating, and review.
+          Return your response in exactly the following json array format. 
+          Use double quotes for both field names and values.
+          Do not format with backticks or label it as json, just return the pure json itself:
+          { "reviews":[
+            {"professor": name,
+            "subject": subject,
+            "stars": rating,
+            "review": review},
+          ]}
+        `;
+
         const aiMsg = await llm.invoke([
           [
             "system",
@@ -48,20 +60,21 @@ export async function POST(request) {
           ],
           ["human", docs[0].pageContent],
         ]);
-        console.log(aiMsg.content)
-        // Assuming the extraction includes the professor's details in JSON format
-        const data = JSON.parse(extraction.text);
+
+        const data = JSON.parse(aiMsg.content);
         
-        if (data.professor && data.subject && !isNaN(data.stars)) {
-          scrapedData.push({
-            professor: data.professor,
-            subject: data.subject,
-            stars: parseFloat(data.stars),
-            review: data.review || "",
-          });
-        } else {
-          console.error(`Failed to scrape data from URL: ${currURL}. The data might be incomplete or invalid.`);
-        }
+        data.reviews.forEach((review) => {
+          if (review.professor && review.subject && !isNaN(review.stars)) {
+            scrapedData.push({
+              professor: review.professor,
+              subject: review.subject,
+              stars: parseFloat(review.stars),
+              review: review.review || "",
+            });
+          } else {
+            console.error(`Failed to scrape data from URL: ${currURL}. The data might be incomplete or invalid.`);
+          }
+        })
       } catch (error) {
         console.error(`Error occurred while processing URL: ${currURL}`, error.message);
       }
@@ -71,8 +84,8 @@ export async function POST(request) {
       return NextResponse.json({ error: "No valid data scraped from the provided URLs." }, { status: 400 });
     }
 
-    const formattedData = scrapedData.map((entry, index) => ({
-      id: `prof-${index}-${entry.professor.replace(/\s+/g, '-').toLowerCase()}`,
+    const formattedData = scrapedData.map((entry) => ({
+      id: `${entry.professor.replace(/\s+/g, '-').toLowerCase()}`,
       values: [entry.stars],
       metadata: {
         professor: entry.professor,
@@ -80,13 +93,8 @@ export async function POST(request) {
         review: entry.review,
       },
     }));
-    
-    await pinecone.upsert({
-      indexName: "rag",
-      upsertRequest: {
-        vectors: formattedData,
-      },
-    });
+    console.log(formattedData)
+    await index.upsert(formattedData);
 
     return NextResponse.json({ message: "Data successfully upserted to Pinecone!" });
 
