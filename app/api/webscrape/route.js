@@ -12,10 +12,13 @@ export async function POST(request) {
       apiKey: process.env.PINECONE_API_KEY,
     });
 
-    const index = pc.Index('rag').namespace('ns1');
+    const index = pc.Index("rag").namespace("ns1");
 
     if (!urls || !Array.isArray(urls)) {
-      return NextResponse.json({ error: "Invalid input, expected an array of URLs." }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid input, expected an array of URLs." },
+        { status: 400 }
+      );
     }
 
     const scrapedData = [];
@@ -24,7 +27,7 @@ export async function POST(request) {
     const llm = new ChatOpenAI({
       apiKey: process.env.OPENAI_API_KEY,
       modelName: "gpt-4o-mini",
-      temperature: 0
+      temperature: 0,
     });
 
     const openai = new OpenAI({
@@ -59,14 +62,12 @@ export async function POST(request) {
         `;
 
         const aiMsg = await llm.invoke([
-          [
-            "system",
-            query,
-          ],
+          ["system", query],
           ["human", docs[0].pageContent],
         ]);
 
         const data = JSON.parse(aiMsg.content);
+        console.log(data);
 
         for (const review of data.reviews) {
           if (review.professor && review.subject && !isNaN(review.stars)) {
@@ -89,25 +90,37 @@ export async function POST(request) {
               },
             });
           } else {
-            console.error(`Failed to scrape data from URL: ${currURL}. The data might be incomplete or invalid.`);
+            console.error(
+              `Failed to scrape data from URL: ${currURL}. The data might be incomplete or invalid.`
+            );
           }
         }
       } catch (error) {
-        console.error(`Error occurred while processing URL: ${currURL}`, error.message);
+        console.error(
+          `Error occurred while processing URL: ${currURL}`,
+          error.message
+        );
       }
     }
 
     if (scrapedData.length === 0) {
-      return NextResponse.json({ error: "No valid data scraped from the provided URLs." }, { status: 400 });
+      return NextResponse.json(
+        { error: "No valid data scraped from the provided URLs." },
+        { status: 400 }
+      );
     }
 
     // Upsert the formatted data with embeddings to Pinecone
     await index.upsert(scrapedData);
 
-    return NextResponse.json({ message: "Data successfully upserted to Pinecone!" });
-
+    return NextResponse.json({
+      message: "Data successfully upserted to Pinecone!",
+    });
   } catch (error) {
     console.error("Error occurred while scraping or upserting data:", error);
-    return NextResponse.json({ error: "Failed to process the request." }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to process the request." },
+      { status: 500 }
+    );
   }
 }
