@@ -3,6 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { ChevronDown } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 export default function Dashboard() {
   const [messages, setMessages] = useState([
@@ -95,6 +101,23 @@ export default function Dashboard() {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />
+            <Popover>
+              <PopoverTrigger>
+                <Button variant="outline" className="p-2">
+                  <ChevronDown />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-30 bg-primary">
+                <div className="flex flex-col gap-2">
+                  <Button variant="ghost" className="text-white">
+                    Chat
+                  </Button>
+                  <Button variant="ghost" className="text-white">
+                    Scrape URL
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
             <Button onClick={sendMessage}>Send</Button>
           </div>
         </CardContent>
