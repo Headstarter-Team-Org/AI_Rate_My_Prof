@@ -101,7 +101,7 @@ export default function Dashboard() {
                 <div
                   className={`${
                     message.role === "assistant"
-                      ? "bg-secondary text-black"
+                      ? "bg-background text-black"
                       : "bg-primary text-white"
                   } p-2 rounded-md max-w-[70%]`}
                 >
@@ -125,10 +125,12 @@ export default function Dashboard() {
               onChange={(e) => setMessage(e.target.value)}
             />
             <Popover>
-              <PopoverTrigger>
-                <Button variant="outline" className="p-2">
-                  <ChevronDown />
-                </Button>
+              <PopoverTrigger asChild>
+                <div className="cursor-pointer">
+                  <Button variant="outline" className="p-2">
+                    <ChevronDown />
+                  </Button>
+                </div>
               </PopoverTrigger>
               <PopoverContent className="w-30 bg-primary">
                 <div className="flex flex-col gap-2">
