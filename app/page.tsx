@@ -36,9 +36,9 @@ export default function Home() {
       </div>
       <div className="flex flex-col items-center justify-center gap-10 p-5 my-5">
         <h1 className="text-2xl sm:text-4xl text-secondary">Developers</h1>
-        <div className="flex flex-row items-center justify-center gap-10">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-10">
           <div className="flex flex-col items-center justify-center">
-            <div className="relative sm:w-40 sm:h-40 w-20 h-20 rounded-full overflow-hidden">
+            <div className="relative sm:w-40 sm:h-40 w-24 h-24 rounded-full overflow-hidden">
               <Image
                 src={maisha}
                 alt="Maisha Supritee Chowdhury"
@@ -58,7 +58,7 @@ export default function Home() {
           </div>
 
           <div className="flex flex-col items-center justify-center">
-            <div className="relative sm:w-40 sm:h-40 w-20 h-20 rounded-full overflow-hidden">
+            <div className="relative sm:w-40 sm:h-40 w-24 h-24 rounded-full overflow-hidden">
               <Image
                 src={landingPage}
                 alt="Evan Shoemaker"

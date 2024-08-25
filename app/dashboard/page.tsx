@@ -119,7 +119,10 @@ export default function Dashboard() {
   const messagesEndRef = useRef<HTMLDivElement | null>(null); // Ref for scrolling to the bottom of the chat
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "end",
+    });
   };
 
   // Scroll to the bottom of the chat when new messages are added
