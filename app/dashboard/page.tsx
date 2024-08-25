@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useState, useRef, useEffect } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, CircleAlert } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -16,75 +16,104 @@ export default function Dashboard() {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      content: "Hi I'm the ProfEval assitant, how can I help you today?",
+      content: "Hi I'm the ProfEval assistant, how can I help you today?",
     },
   ]);
   const [message, setMessage] = useState("");
-  const [mode, setMode] = useState("chat");
+  const [url, setUrl] = useState("");
+  const [responseMessage, setResponseMessage] = useState("");
+  const [isLoadingUrls, setIsLoadingUrls] = useState(false);
+  const [isLoadingMessage, setIsLoadingMessage] = useState(false);
 
-  const sendMessage = async () => {
-    if (mode === "chat") {
-      setMessages([
-        ...messages,
-        { role: "user", content: message },
-        { role: "assistant", content: "" },
-      ]);
+  useEffect(() => {
+    if (responseMessage) {
+      alert(responseMessage);
+      setResponseMessage(""); // Clear the message after showing the alert
+    }
+  }, [responseMessage]);
 
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify([...messages, { role: "user", content: message }]),
-      }).then(async (res) => {
-        if (!res.body) {
-          throw new Error("Response body is null");
-        }
-        const reader = res.body.getReader();
-        const decoder = new TextDecoder();
+  const sendUrl = async () => {
+    setIsLoadingUrls(true);
+    const urls = url.split(",").map((url) => url.trim());
+    if (urls.length === 0) {
+      setResponseMessage("Please enter a URL to add.");
+      setIsLoadingUrls(false);
+      return;
+    }
 
-        let result = "";
-        return reader
-          .read()
-          .then(function processText({ done, value }): Promise<string> {
-            if (done) {
-              return Promise.resolve(result);
-            }
-            const text = decoder.decode(value || new Uint8Array(), {
-              stream: true,
-            });
-            setMessages((messages) => {
-              let lastMessage = messages[messages.length - 1];
-              let otherMessages = messages.slice(0, messages.length - 1);
-
-              return [
-                ...otherMessages,
-                { ...lastMessage, content: lastMessage.content + text },
-              ];
-            });
-
-            return reader.read().then(processText);
-          });
-      });
-      setMessage("");
-    } else if (mode === "scrape") {
-      const urls = message.split(",").map((url) => url.trim());
+    try {
       const response = await fetch("/api/webscrape", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ urls }),
+        body: JSON.stringify({ urls }), // Change this line
       });
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const data = await response.json();
-      setMessages([
-        ...messages,
-        { role: "user", content: `Scraping URLs: ${message}` },
-        { role: "assistant", content: JSON.stringify(data, null, 2) },
-      ]);
+      setResponseMessage(data.message || "Failed to get response message!");
+      setUrl("");
+    } catch (error) {
+      console.error("Error adding URLs:", error);
+      setResponseMessage("Error adding URLs. Please try again.");
     }
+    setIsLoadingUrls(false);
+  };
+
+  const sendMessage = async () => {
+    if (!message) {
+      return;
+    }
+
+    setIsLoadingMessage(true);
+    setMessages([
+      ...messages,
+      { role: "user", content: message },
+      { role: "assistant", content: "" },
+    ]);
+
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify([...messages, { role: "user", content: message }]),
+    }).then(async (res) => {
+      if (!res.body) {
+        throw new Error("Response body is null");
+      }
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+
+      let result = "";
+      return reader
+        .read()
+        .then(function processText({ done, value }): Promise<string> {
+          if (done) {
+            return Promise.resolve(result);
+          }
+          const text = decoder.decode(value || new Uint8Array(), {
+            stream: true,
+          });
+          setMessages((messages) => {
+            let lastMessage = messages[messages.length - 1];
+            let otherMessages = messages.slice(0, messages.length - 1);
+
+            return [
+              ...otherMessages,
+              { ...lastMessage, content: lastMessage.content + text },
+            ];
+          });
+
+          return reader.read().then(processText);
+        });
+    });
     setMessage("");
+    setIsLoadingMessage(false);
   };
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null); // Ref for scrolling to the bottom of the chat
@@ -98,10 +127,19 @@ export default function Dashboard() {
     scrollToBottom();
   }, [messages]);
 
+  // Send message when Enter is pressed (without Shift)
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      sendMessage();
+    }
+  };
+
   return (
     <main className="flex min-h-screen flex-col items-center gap-10 p-5">
       <h1 className="sm:text-5xl text-2xl text-primary font-bold">ProfEval</h1>
-      <Card className="w-[80vw] h-[60vh] flex flex-col">
+
+      <Card className="w-[90vw] h-[60vh] flex flex-col">
         <CardContent className="flex-grow overflow-auto p-4">
           <div className="flex flex-col space-y-4">
             {messages.map((message, index) => (
@@ -170,44 +208,45 @@ export default function Dashboard() {
             <Input
               className="flex-grow"
               type="text"
-              placeholder={
-                mode === "chat"
-                  ? "Enter message"
-                  : "Enter URLs separated by commas"
-              }
+              placeholder="Enter message"
               value={message}
+              onKeyDown={handleKeyPress}
               onChange={(e) => setMessage(e.target.value)}
             />
-            <Popover>
-              <PopoverTrigger asChild>
-                <div className="cursor-pointer">
-                  <Button variant="outline" className="p-2">
-                    <ChevronDown />
-                  </Button>
-                </div>
-              </PopoverTrigger>
-              <PopoverContent className="w-30 bg-primary">
-                <div className="flex flex-col gap-2">
-                  <Button
-                    variant="ghost"
-                    className="text-white"
-                    onClick={() => setMode("chat")}
-                  >
-                    Chat
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="text-white"
-                    onClick={() => setMode("scrape")}
-                  >
-                    Scrape URL
-                  </Button>
-                </div>
-              </PopoverContent>
-            </Popover>
-            <Button onClick={sendMessage}>
-              {mode === "chat" ? "Send" : "Scrape"}
+
+            <Button onClick={sendMessage} disabled={isLoadingMessage}>
+              {isLoadingMessage ? "Sending..." : "Send"}
             </Button>
+          </div>
+        </CardContent>
+      </Card>
+      <Card className="w-[90vw] flex flex-col bg-background border-0 flex-grow">
+        <CardContent className="flex-grow">
+          <div className="flex flex-col w-full h-full gap-2 p-2 sm:p-4">
+            <div className="flex flex-col sm:flex-row gap-2 items-center">
+              <CircleAlert className="w-6 h-6 sm:w-10 sm:h-10" />
+              <h2 className="text-base sm:text-lg md:text-2xl text-primary font-extrabold">
+                Don&apos;t find your professor&apos;s information from our
+                assistant?
+              </h2>
+            </div>
+            <p className="text-secondary text-sm sm:text-base">
+              Insert the url with your professor&apos;s information (reviews,
+              ratings, subject, etc.) below to add your professor&apos;s data to
+              our system!
+            </p>
+            <div className="flex flex-row gap-2 mt-4">
+              <Input
+                className="flex-grow bg-white"
+                type="text"
+                placeholder="Enter URLs separated by commas"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+              />
+              <Button onClick={sendUrl} disabled={isLoadingUrls}>
+                {isLoadingUrls ? "Adding..." : "Add"}
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
