@@ -1,36 +1,34 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# ProfEval
 
-## Getting Started
+ProfEval is an AI powered Rate My Professor website. Professor Recommendations, Reviews and Suggestions at the tip of your fingertips.
+It allows users to chat with an AI chat bot powered by OpenAI to get reviews, ratings, and suggestions on Professors they are interested in. If the professor they want to know more about is not available in our system, users can also add urls of those professors to add their information to our system! This is made possible with the help of RAG and webscraping.
 
-First, run the development server:
+## Click to Watch the Demo:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+[![ProfEval Demo](https://img.youtube.com/vi/OiOGMKXodKo/0.jpg)](https://www.youtube.com/watch?v=OiOGMKXodKo)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+⭐ Respond to users with Open AI model\
+⭐ Extract professor reviews, ratings and subjects from user provided websites using RAG\
+⭐ Deployed using Vercel\
+⭐ Seamless UI using TailwindCSS and shadcn
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Techstack
 
-## Learn More
+- Frontend: Next.js, TypeScript, TailwindCSS, shadcn
+- AI: Open AI, RAG, LangChain
+- Database: Pinecone
+- Backend: Python
+- Webscraping: FireCrawl API
 
-To learn more about Next.js, take a look at the following resources:
+## Developers
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Frontend: [Maisha Supritee Chowdhury](https://github.com/maishaSupritee)\
+Backend: [Evan Shoemaker](https://github.com/Colexeco)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+### Flashcard Generation
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+    1. Ask any questions regarding a professor, their reviews or ratings to our ProfEval chatbot
+    2. If our chatbot does not have any information on your professor, add it in to our system using the input url
+    3. Input one url, or if you want to input multiple urls to add to our system, make sure they are separated by commas
