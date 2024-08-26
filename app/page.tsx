@@ -38,7 +38,7 @@ export default function Home() {
           <div className="flex flex-col items-center justify-center">
             <div className="relative sm:w-40 sm:h-40 w-24 h-24 rounded-full overflow-hidden">
               <Image
-                src="/images/maisha.jpg"
+                src="/images/maisha.JPG"
                 alt="Maisha Supritee Chowdhury"
                 fill
                 style={{ objectFit: "cover" }}
