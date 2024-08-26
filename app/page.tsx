@@ -1,7 +1,4 @@
 import Image from "next/image";
-import landingPage from "../public/images/landingPage.jpg";
-import maisha from "../public/images/maisha.jpg";
-import evan from "../public/images/evan.jpg";
 import { Zap, Linkedin } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -11,7 +8,7 @@ export default function Home() {
     <main className="flex min-h-screen w-full flex-col">
       <div className="w-full h-[100vh] relative">
         <Image
-          src={landingPage}
+          src="/images/landingPage.jpg"
           alt="ProfEval"
           fill
           style={{ objectFit: "cover" }}
@@ -41,7 +38,7 @@ export default function Home() {
           <div className="flex flex-col items-center justify-center">
             <div className="relative sm:w-40 sm:h-40 w-24 h-24 rounded-full overflow-hidden">
               <Image
-                src={maisha}
+                src="/images/maisha.jpg"
                 alt="Maisha Supritee Chowdhury"
                 fill
                 style={{ objectFit: "cover" }}
@@ -61,7 +58,7 @@ export default function Home() {
           <div className="flex flex-col items-center justify-center">
             <div className="relative sm:w-40 sm:h-40 w-24 h-24 rounded-full overflow-hidden">
               <Image
-                src={evan}
+                src="/images/evan.jpg"
                 alt="Evan Shoemaker"
                 fill
                 style={{ objectFit: "cover" }}
