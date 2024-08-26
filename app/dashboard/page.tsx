@@ -142,7 +142,7 @@ export default function Dashboard() {
     <main className="flex min-h-screen flex-col items-center gap-10 p-5">
       <h1 className="sm:text-5xl text-2xl text-primary font-bold">ProfEval</h1>
 
-      <Card className="w-[90vw] h-[60vh] flex flex-col">
+      <Card className="w-[90vw] h-[70vh] flex flex-col">
         <CardContent className="flex-grow overflow-auto p-4">
           <div className="flex flex-col space-y-4">
             {messages.map((message, index) => (
