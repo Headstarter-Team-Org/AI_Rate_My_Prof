@@ -1,6 +1,6 @@
 import Image from "next/image";
 import landingPage from "../public/images/landingPage.jpg";
-import maisha from "../public/images/maisha.JPG";
+import maisha from "../public/images/maisha.jpg";
 import evan from "../public/images/evan.jpg";
 import { Zap, Linkedin } from "lucide-react";
 import Link from "next/link";
